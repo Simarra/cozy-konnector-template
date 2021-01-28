@@ -34,21 +34,21 @@ async function start(fields, cozyParameters) {
   await authenticate.bind(this)(fields.username, fields.password)
   log('info', 'Successfully logged in')
   // The BaseKonnector instance expects a Promise as return of the function
-  // log('info', 'Fetching the list of documents')
-  // const $ = await request(`${baseUrl}/index.html`)
-  // // cheerio (https://cheerio.js.org/) uses the same api as jQuery (http://jquery.com/)
-  // log('info', 'Parsing list of documents')
-  // const documents = await parseDocuments($)
+  log('info', 'Fetching the list of documents')
+  const $ = await request(`${baseUrl}/index.html`)
+  // cheerio (https://cheerio.js.org/) uses the same api as jQuery (http://jquery.com/)
+  log('info', 'Parsing list of documents')
+  const documents = await parseDocuments($)
 
-  // // Here we use the saveBills function even if what we fetch are not bills,
-  // // but this is the most common case in connectors
-  // log('info', 'Saving data to Cozy')
-  // await this.saveBills(documents, fields, {
-  //   // This is a bank identifier which will be used to link bills to bank operations. These
-  //   // identifiers should be at least a word found in the title of a bank operation related to this
-  //   // bill. It is not case sensitive.
-  //   identifiers: ['books']
-  // })
+  // Here we use the saveBills function even if what we fetch are not bills,
+  // but this is the most common case in connectors
+  log('info', 'Saving data to Cozy')
+  await this.saveBills(documents, fields, {
+    // This is a bank identifier which will be used to link bills to bank operations. These
+    // identifiers should be at least a word found in the title of a bank operation related to this
+    // bill. It is not case sensitive.
+    identifiers: ['books']
+  })
 }
 
 // This shows authentication using the [signin function](https://github.com/konnectors/libs/blob/master/packages/cozy-konnector-libs/docs/api.md#module_signin)
@@ -57,11 +57,12 @@ function authenticate(username, password) {
   return this.signin({
     url: `${baseUrl}/log_client.php`,
     formSelector: 'form',
-    formData: { // inputEmail: username,
-                // inputPassword: password,
-                login: username,
-                pass: password
-               },
+    formData: {
+      // inputEmail: username,
+      // inputPassword: password,
+      login: username,
+      pass: password
+    },
     // The validate function will check if the login request was a success. Every website has a
     // different way to respond: HTTP status code, error message in HTML ($), HTTP redirection
     // (fullResponse.request.uri.href)...
